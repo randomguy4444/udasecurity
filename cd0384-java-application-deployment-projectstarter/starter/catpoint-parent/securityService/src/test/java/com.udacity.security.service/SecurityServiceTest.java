@@ -1,7 +1,7 @@
-package com.udacity.security.service;
+package com.udacity.security.service.service;
 
-import com.udacity.image.service.ImageService;
-import com.udacity.security.service.SecurityService;
+//import com.udacity.image.service.ImageService;
+import com.udacity.security.service.service.SecurityService;
 
 /**
  * Unit test for SecurityService.
