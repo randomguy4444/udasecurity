@@ -53,7 +53,7 @@
                             <manifest>
                                 <addClasspath>true</addClasspath>
                                 <classpathPrefix>lib/</classpathPrefix>
-                                <mainClass>com.udacity.security.service.application.CatpointApp</mainClass>
+                                <mainClass>CatpointApp</mainClass>
                             </manifest>
                         </archive>
                     </configuration>

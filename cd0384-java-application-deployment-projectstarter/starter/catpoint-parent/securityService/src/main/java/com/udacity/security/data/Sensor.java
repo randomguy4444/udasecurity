@@ -1,4 +1,4 @@
-package com.udacity.security.service.data;
+package com.udacity.security.data;
 
 
 import com.google.common.collect.ComparisonChain;

@@ -1,11 +1,11 @@
-package com.udacity.security.service.service;
+package com.udacity.security.service;
 
 import com.udacity.image.service.ImageService;
-import com.udacity.security.service.application.StatusListener;
-import com.udacity.security.service.data.AlarmStatus;
-import com.udacity.security.service.data.ArmingStatus;
-import com.udacity.security.service.data.SecurityRepository;
-import com.udacity.security.service.data.Sensor;
+import com.udacity.security.application.StatusListener;
+import com.udacity.security.data.AlarmStatus;
+import com.udacity.security.data.ArmingStatus;
+import com.udacity.security.data.SecurityRepository;
+import com.udacity.security.data.Sensor;
 
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
@@ -98,6 +98,22 @@ public class SecurityService {
             case PENDING_ALARM : setAlarmStatus(AlarmStatus.NO_ALARM);
             case ALARM : setAlarmStatus(AlarmStatus.PENDING_ALARM);
         }
+    }
+    /**
+     * Change the activation status for the specified sensor when no activate status is passed,
+     * and update alarm status if necessary.
+     * @param sensor
+     */
+    public void changeSensorActivationStatus(Sensor sensor) {
+        AlarmStatus currentAlarmStatus = securityRepository.getAlarmStatus();
+        ArmingStatus currentArmingStatus = securityRepository.getArmingStatus();
+
+        if (currentAlarmStatus == AlarmStatus.PENDING_ALARM && !sensor.getActive()) {
+            handleSensorDeactivated();
+        } else if (currentAlarmStatus == AlarmStatus.ALARM && currentArmingStatus == ArmingStatus.DISARMED) {
+            handleSensorDeactivated();
+        }
+        securityRepository.updateSensor(sensor);
     }
 
     /**

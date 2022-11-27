@@ -1,10 +1,10 @@
-package com.udacity.security.service.application;
+package com.udacity.security.application;
 
-import com.udacity.security.service.data.PretendDatabaseSecurityRepositoryImpl;
-import com.udacity.security.service.data.SecurityRepository;
+import com.udacity.security.data.PretendDatabaseSecurityRepositoryImpl;
+import com.udacity.security.data.SecurityRepository;
+import com.udacity.security.service.SecurityService;
 import com.udacity.image.service.ImageService;
 import com.udacity.image.service.FakeImageService;
-import com.udacity.security.service.service.SecurityService;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;

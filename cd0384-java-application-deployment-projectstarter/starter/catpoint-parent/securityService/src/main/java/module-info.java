@@ -5,5 +5,6 @@ module securityService {
     requires java.prefs;
     requires miglayout;
     requires imageService;
-    opens com.udacity.security.service.data to com.google.gson;
+    requires org.junit.jupiter.api;
+    opens com.udacity.security.data to com.google.gson;
 }

@@ -1,8 +1,8 @@
-package com.udacity.security.service.application;
+package com.udacity.security.application;
 
-import com.udacity.security.service.data.AlarmStatus;
-import com.udacity.security.service.service.SecurityService;
-import com.udacity.security.service.service.StyleService;
+import com.udacity.security.data.AlarmStatus;
+import com.udacity.security.service.SecurityService;
+import com.udacity.security.service.StyleService;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
