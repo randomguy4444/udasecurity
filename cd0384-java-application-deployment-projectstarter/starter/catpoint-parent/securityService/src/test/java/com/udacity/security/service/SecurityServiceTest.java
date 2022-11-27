@@ -1,4 +1,4 @@
-package com.udacity.security;
+package com.udacity.security.service;
 
 import com.udacity.image.service.ImageService;
 import com.udacity.security.data.*;
