@@ -171,35 +171,37 @@ class SecurityServiceTest {
 
     // 11.If the system is armed-home while the camera shows a cat, set the alarm status to alarm.
     @Test
-    void armedHomeSystem_cameraShowsCat_changeToAlarmStatus() {
-        when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.ARMED_HOME);
+    void armHome_catDetected_setAlarm() {
         when(imageService.imageContainsCat(any(BufferedImage.class), anyFloat())).thenReturn(true);
+        when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.ARMED_HOME);
 
         securityService.processImage(mock(BufferedImage.class));
 
         verify(securityRepository).setAlarmStatus(AlarmStatus.ALARM);
     }
 
-    // addtional for coverage: If alarm is active while the system is disarmed, change to pending alarm status
+    // addtional for coverage:
+    // a sensor deactivated while active and system pending alarm, change to no alarm state
     @Test
-    void alarmActiveAndSystemDisarmed_changeToPending() {
-        when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.DISARMED);
-        when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.ALARM);
-
-        securityService.changeSensorActivationStatus(sensor);
-
-        verify(securityRepository).setAlarmStatus(AlarmStatus.PENDING_ALARM);
-    }
-
-    // addtional for coverage: If a sensor is deactivated while active and the system is already pending alarm, change to no alarm state
-    @Test
-    void handleSensorDeactivated_sensorActiveAndSystemPending_returnToNoAlarm() {
+    void sensorDeactivatedActive_pendingAlarm_noAlarm() {
         when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
         sensor.setActive(true);
 
         securityService.changeSensorActivationStatus(sensor,false);
 
         verify(securityRepository).setAlarmStatus(AlarmStatus.NO_ALARM);
+    }
+
+    // addtional for coverage:
+    // alarm active while the system disarmed, change to pending alarm status
+    @Test
+    void alarmActive_systemDisarmed_pendingAlarm() {
+        when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.DISARMED);
+        when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.ALARM);
+
+        securityService.changeSensorActivationStatus(sensor);
+
+        verify(securityRepository).setAlarmStatus(AlarmStatus.PENDING_ALARM);
     }
 }
 
