@@ -10,6 +10,7 @@ import com.udacity.security.data.Sensor;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Service that receives information about changes to the security system. Responsible for
@@ -23,6 +24,7 @@ public class SecurityService {
     private ImageService imageService;
     private SecurityRepository securityRepository;
     private Set<StatusListener> statusListeners = new HashSet<>();
+    private boolean isCatDetected = false;
 
     public SecurityService(SecurityRepository securityRepository, ImageService imageService) {
         this.securityRepository = securityRepository;
@@ -37,8 +39,22 @@ public class SecurityService {
     public void setArmingStatus(ArmingStatus armingStatus) {
         if(armingStatus == ArmingStatus.DISARMED) {
             setAlarmStatus(AlarmStatus.NO_ALARM);
+        } else if (armingStatus == ArmingStatus.ARMED_HOME && isCatDetected) {
+            setAlarmStatus(AlarmStatus.ALARM);
+        } else {
+            ConcurrentSkipListSet<Sensor> sensors = new ConcurrentSkipListSet<>(getSensors());
+            sensors.forEach(sensor -> changeSensorActivationStatus(sensor,false));
         }
         securityRepository.setArmingStatus(armingStatus);
+        statusListeners.forEach(StatusListener::sensorStatusChanged);
+
+        // previous buggy version
+        /*
+        if(armingStatus == ArmingStatus.DISARMED) {
+            setAlarmStatus(AlarmStatus.NO_ALARM);
+        }
+        securityRepository.setArmingStatus(armingStatus);
+        * */
     }
 
     /**
@@ -122,6 +138,22 @@ public class SecurityService {
      * @param active
      */
     public void changeSensorActivationStatus(Sensor sensor, Boolean active) {
+        // NOTE: refactor this API for testing, otherwise, we will get
+        // https://www.baeldung.com/mockito-unnecessary-stubbing-exception
+        // see original code commented below
+        AlarmStatus currentAlarmStatus = securityRepository.getAlarmStatus();
+
+        if (currentAlarmStatus != AlarmStatus.ALARM) {
+            if (active) {
+                handleSensorActivated();
+            } else if (sensor.getActive()) {
+                handleSensorDeactivated();
+            }
+        }
+        sensor.setActive(active);
+        securityRepository.updateSensor(sensor);
+
+        /*
         if(!sensor.getActive() && active) {
             handleSensorActivated();
         } else if (sensor.getActive() && !active) {
@@ -129,6 +161,7 @@ public class SecurityService {
         }
         sensor.setActive(active);
         securityRepository.updateSensor(sensor);
+        */
     }
 
     /**
